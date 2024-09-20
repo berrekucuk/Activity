@@ -7,12 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Activity.BLL\Activity.BLL.csproj" />
     <ProjectReference Include="..\Activity.DAL\Activity.DAL.csproj" />
+    <ProjectReference Include="..\Activity.DTO\Activity.DTO.csproj" />
+    <ProjectReference Include="..\Activity.Validations\Activity.Validations.csproj" />
   </ItemGroup>
 
 </Project>

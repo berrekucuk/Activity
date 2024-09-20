@@ -48,5 +48,13 @@ namespace Activity.BLL.Repository
             entity.DeleteDate = DateTime.Now;
             db.SaveChanges();
         }
+
+        public TEntity Update(TEntity entity)
+        {
+            entity.UpdateDate = DateTime.Now;
+            dbSet.Update(entity);
+            db.SaveChanges() ;
+            return entity;
+        }
     }
 }
