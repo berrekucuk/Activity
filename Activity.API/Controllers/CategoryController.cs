@@ -1,4 +1,5 @@
-﻿using Activity.BLL.Repository;
+﻿using Activity.BLL;
+using Activity.BLL.Repository;
 using Activity.DAL.ORM;
 using Activity.DTO;
 using Microsoft.AspNetCore.Http;
@@ -10,11 +11,11 @@ namespace Activity.API.Controllers
     [ApiController]
     public class CategoryController : ControllerBase
     {
-        GenericRepository<Category> _categoryRepository;
+        IUnitOfWork _unitOfWork;
 
-        public CategoryController()
+        public CategoryController(IUnitOfWork unitOfWork)
         {
-            _categoryRepository = new GenericRepository<Category>();
+            _unitOfWork = unitOfWork;
         }
 
         [HttpPost]
@@ -23,7 +24,8 @@ namespace Activity.API.Controllers
             Category category = new Category();
             category.Name = model.Name;
             category.Description = model.Description;
-            _categoryRepository.Add(category);
+            _unitOfWork.CategoryRepository.Add(category);
+            _unitOfWork.Save();
 
             CreateCategoryResponseDto response = new CreateCategoryResponseDto();
             response.Id = category.ID;
@@ -34,9 +36,9 @@ namespace Activity.API.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAllCategories()
+        public IActionResult GetAllCategories(int pageNumber, int pageSize)
         {
-            var result = _categoryRepository.GetAll();
+            var result = _unitOfWork.CategoryRepository.GetAll(pageNumber,pageSize);
 
             var response = new List<GetAllCategoriesResponseDto>();
 
@@ -59,17 +61,24 @@ namespace Activity.API.Controllers
             return Ok(result);
         }
 
+        //[HttpGet]
+        //public IActionResult GetAllCategoriesWithPagination(int page, int pageSize)
+        //{
+        //    var response = _categoryRepository.GetAllWithPagination(page, pageSize);
+        //    return Ok(response);
+        //}
+
         [HttpGet("{id}")]
         public IActionResult GetCategoryById(Guid id)
         {
-            var result = _categoryRepository.GetById(id);
+            var result = _unitOfWork.CategoryRepository.GetById(id);
             return Ok(result);
         }
 
         [HttpDelete("{id}")]
         public IActionResult DeleteCategory(Guid id)
         {
-            _categoryRepository.Remove(id);
+            _unitOfWork.CategoryRepository.Remove(id);
             return Ok();
         }
 
@@ -80,7 +89,8 @@ namespace Activity.API.Controllers
             category.ID = model.Id;
             category.Name = model.Name;
             category.Description = model.Description;
-            _categoryRepository.Update(category);
+            _unitOfWork.CategoryRepository.Update(category);
+            _unitOfWork.Save();
             return Ok();
         }
     }

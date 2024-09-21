@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Activity.Validations
+namespace Activity.Validations.Validators
 {
     public class CreateCategoryRequestValidation : AbstractValidator<CreateCategoryRequestDto>
     {

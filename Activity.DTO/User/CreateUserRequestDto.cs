@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Activity.DAL.ORM
+namespace Activity.DTO
 {
-    public class User : BaseEntity
+    public class CreateUserRequestDto
     {
         public string Email { get; set; }
         public string Password { get; set; }
-        public string ProfileImage { get; set; }
+
     }
 }

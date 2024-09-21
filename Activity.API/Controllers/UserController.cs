@@ -1,5 +1,7 @@
-﻿using Activity.BLL.Repository;
+﻿using Activity.BLL;
+using Activity.BLL.Repository;
 using Activity.DAL.ORM;
+using Activity.DTO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,35 +11,48 @@ namespace Activity.API.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        GenericRepository<User> _userRepository;
+        IUnitOfWork _unitOfWork;
 
-        public UserController()
+        public UserController(IUnitOfWork unitOfWork)
         {
-            _userRepository = new GenericRepository<User>();
+            _unitOfWork = unitOfWork;
         }
 
         [HttpPost]
-        public IActionResult AddUser(string email, string password)
+        public IActionResult Post([FromForm] CreateUserRequestDto createUserRequestDto, IFormFile formFile)
         {
-            User user = new User();
-            user.Email = email;
-            user.Password = password;
-            _userRepository.Add(user);
-            return Ok();
-        }
+            var user = new User()
+            {
+                Email = createUserRequestDto.Email,
+                Password = createUserRequestDto.Password
+            };
 
-        [HttpGet]
-        public IActionResult GetAllUsers()
-        {
-            var response = _userRepository.GetAll();
-            return Ok(response);
-        }
+            if(formFile != null)
+            {
+                var ext = Path.GetExtension(formFile.FileName);
 
-        [HttpGet("{id}")]
-        public IActionResult GetUserById(Guid id)
-        {
-            var result = _userRepository.GetById(id);
-            return Ok(result);
+                if(ext == ".jpg" || ext == ".png" || ext == ".jpeg")
+                {
+                    return BadRequest("File type is not valid");
+                }
+
+                var fileName = Guid.NewGuid() + ext;
+
+                string path = Path.Combine(Directory.GetCurrentDirectory(),"wwwroot/images", formFile.FileName);
+                using(var stream = new FileStream(path, FileMode.Create))
+                {
+                    formFile.CopyTo(stream);
+                }
+
+                user.ProfileImage = fileName;
+
+            }
+
+            _unitOfWork.UserRepository.Add(user);
+            _unitOfWork.Save();
+
+            return Ok(user.ID);
+           
         }
     }
 }

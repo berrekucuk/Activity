@@ -11,11 +11,13 @@ namespace Activity.DAL.ORM
     {
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Server=LAPTOP-2K18C6FK\\SQLEXPRESS05;Database=ActivityDb;Trusted_Connection=True;TrustServerCertificate=True");
+            optionsBuilder.UseSqlServer(@"Server=LAPTOP-2K18C6FK\SQLEXPRESS05;Database=ActivityDb;Trusted_Connection=True;TrustServerCertificate=True");
         }
 
         public DbSet<Category> Categories { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<Blog> Blogs { get; set; }
+        public DbSet<Activity> Activities { get; set; }
 
     }
 }
